@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class minigamecontroller : MonoBehaviour
 {
     private PlayerScript player;
+    private int activeGame;
 
     //find_and_click
     public Button find1;
@@ -17,8 +18,13 @@ public class minigamecontroller : MonoBehaviour
 
     public Text youWonText;
 
+    //sliding puzzle
+    [SerializeField] private GameObject emptySpace;
+    private Camera _camera;
+
     public void Start()
     {
+        _camera = Camera.main;
         find1.gameObject.SetActive(true);
         find2.gameObject.SetActive(true); 
         find3.gameObject.SetActive(true);
@@ -45,6 +51,11 @@ public class minigamecontroller : MonoBehaviour
     public void ReturnToMap()
     {
         SceneManager.LoadScene("Map");
-    } 
+    }
+
+    private void Update()
+    {
+        if
+    }
 
 }
