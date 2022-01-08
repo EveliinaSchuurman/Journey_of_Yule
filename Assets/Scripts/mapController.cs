@@ -75,7 +75,9 @@ public class mapController : MonoBehaviour
             else
             {
                 player.AmountOfKeys(false);
+                player.SetRoom(roomnumber);
                 SceneManager.LoadScene("training");
+                
             }
             //playerScript takes in room param so the rooms know what to load
         }
@@ -105,7 +107,8 @@ public class mapController : MonoBehaviour
 
     private bool TryToOpenRoom(int roomnum)
     {
-        if (openRooms[roomnum] == 1)
+        //open room7? openRooms[8]
+        if (openRooms[roomnum++] == 1)
         {
             return true;
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class minigamecontroller : MonoBehaviour
 {
@@ -35,8 +36,15 @@ public class minigamecontroller : MonoBehaviour
         if(objs_found == objs_needed)
         {
             youWonText.text = "You won! Here's an item for you";
+
+            //add an item to inventory
             Debug.Log("you won!");
         }
     }
+
+    public void ReturnToMap()
+    {
+        SceneManager.LoadScene("Map");
+    } 
 
 }

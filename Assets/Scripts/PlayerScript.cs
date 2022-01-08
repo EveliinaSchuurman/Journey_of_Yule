@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    private int keys = 0;
+    private int keys = 1;
     private int currentRoomNumber = 0;
     private int roomsOpeneduntil = 0;
 
