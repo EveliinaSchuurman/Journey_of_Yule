@@ -14,18 +14,40 @@ public class mapController : MonoBehaviour
     //script needs all the rooms
     //then I'll individually open them as they slay monsters -> needs to interact with Playerscript(keys) and battlescript(knows if monster is defeated -> win)
 
+    public PlayerScript player;
     public GameObject[] rooms; // room 0 is room 1
     int[] openRooms = new int[9] {0,1,0,0,0,0,0,0,0}; //room'0' is obsolete
 
     public TMP_Text errorText;
     public Image errorBackground;
 
-    //needs a list of open rooms to check if rooms can open
-    public void ProgressRooms(int roomnumber)
+    private void Awake()
     {
+        player = FindObjectOfType<PlayerScript>();
+    }
+    void OnEnable()
+    {
+        Debug.Log("OnEnable called");
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        for (int i = 0; i < player.GetOpenRooms(); i++){
+            ProgressRooms(i, false);
+        }
+    }
+
+    //needs a list of open rooms to check if rooms can open
+    public void ProgressRooms(int roomnumber, bool save)
+    {
+
+        //open room7? openRooms[8]
         //light up pathways and open rooms
-        openRooms[roomnumber] = 1;
-        
+        openRooms[roomnumber++] = 1;
+        if (save == true)
+            player.RoomsOpenTo(roomnumber);
+
         foreach(Transform child in rooms[roomnumber].transform)
         {
             if(child.name == "lights")
@@ -44,17 +66,17 @@ public class mapController : MonoBehaviour
         
         if (TryToOpenRoom(roomnumber) == true)//is the room open, regardless if it is training or fight
         {
-            //if (notenoughkeys) //training -> does the player have keys?
-            //{
-            //    StartCoroutine(ShowImage("Not enough keys!", 2));
-            //}
+            if (player.GetKeys() <= 0) //training -> does the player have keys?
+            {
+                StartCoroutine(ShowImage("Not enough keys!", 2));
+            }
             //check if player has enough keys and substract
 
-            //else openroom
-
-            //has to remember the room theyre in (or I have to think this again
-
-            SceneManager.LoadScene("training");
+            else
+            {
+                player.AmountOfKeys(false);
+                SceneManager.LoadScene("training");
+            }
             //playerScript takes in room param so the rooms know what to load
         }
         else

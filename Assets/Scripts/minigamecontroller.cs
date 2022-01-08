@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class minigamecontroller : MonoBehaviour
 {
+    private PlayerScript player;
+
     //find_and_click
     public Button find1;
     public Button find2; 
