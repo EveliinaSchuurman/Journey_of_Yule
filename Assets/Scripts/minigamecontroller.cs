@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class minigamecontroller : MonoBehaviour
 {
@@ -16,27 +17,20 @@ public class minigamecontroller : MonoBehaviour
     private int objs_found = 0;
     private int objs_needed = 3;
 
-    public Text youWonText;
+    public GameObject youWon;
 
     //sliding puzzle
-    [SerializeField] private GameObject emptySpace;
+    [SerializeField] private Transform emptySpace;
     [SerializeField] private tileScript[] tiles;
     private Camera _camera;
-    public int dist;
-    public Button puzzle_1;
-    public Button puzzle_2;
-    public Button puzzle_3;
-    public Button puzzle_4;
-    public Button puzzle_5;
-    public Button puzzle_6;
-    public Button puzzle_7;
-    public Button puzzle_8;
-    public Button puzzle_9;
-    public Button puzzle_10;
-    public Button puzzle_11;
+    public float dist;
+    private int emptySpaceIndex = 8;
+    private int puzzlenum = 8;
+
 
     public void Start()
     {
+        _camera = Camera.main;
         if(activeGame == 0)
         {
             find1.gameObject.SetActive(true);
@@ -48,31 +42,11 @@ public class minigamecontroller : MonoBehaviour
         }
         if(activeGame == 1)
         {
-            puzzle_1.gameObject.SetActive(true);
-            puzzle_2.gameObject.SetActive(true);
-            puzzle_3.gameObject.SetActive(true);
-            puzzle_4.gameObject.SetActive(true);
-            puzzle_5.gameObject.SetActive(true);
-            puzzle_6.gameObject.SetActive(true);
-            puzzle_7.gameObject.SetActive(true);
-            puzzle_8.gameObject.SetActive(true);
-            puzzle_9.gameObject.SetActive(true);
-            puzzle_10.gameObject.SetActive(true);
-            puzzle_11.gameObject.SetActive(true);
-            puzzle_1.gameObject.GetComponent<Button>().onClick.AddListener(delegate { SlidingPuzzleClick(puzzle_1); });
-            puzzle_2.gameObject.GetComponent<Button>().onClick.AddListener(delegate { SlidingPuzzleClick(puzzle_2); });
-            puzzle_3.gameObject.GetComponent<Button>().onClick.AddListener(delegate { SlidingPuzzleClick(puzzle_3); });
-            puzzle_4.gameObject.GetComponent<Button>().onClick.AddListener(delegate { SlidingPuzzleClick(puzzle_4); });
-            puzzle_5.gameObject.GetComponent<Button>().onClick.AddListener(delegate { SlidingPuzzleClick(puzzle_5); });
-            puzzle_6.gameObject.GetComponent<Button>().onClick.AddListener(delegate { SlidingPuzzleClick(puzzle_6); });
-            puzzle_7.gameObject.GetComponent<Button>().onClick.AddListener(delegate { SlidingPuzzleClick(puzzle_7); });
-            puzzle_8.gameObject.GetComponent<Button>().onClick.AddListener(delegate { SlidingPuzzleClick(puzzle_8); });
-            puzzle_9.gameObject.GetComponent<Button>().onClick.AddListener(delegate { SlidingPuzzleClick(puzzle_9); });
-            puzzle_10.gameObject.GetComponent<Button>().onClick.AddListener(delegate { SlidingPuzzleClick(puzzle_10); });
-            puzzle_11.gameObject.GetComponent<Button>().onClick.AddListener(delegate { SlidingPuzzleClick(puzzle_11); });
+           
 
         }
 
+        Shuffle();
 
     }
 
@@ -82,7 +56,7 @@ public class minigamecontroller : MonoBehaviour
         objs_found++;
         if(objs_found == objs_needed)
         {
-            youWonText.text = "You won! Here's an item for you";
+            win();
 
             //add an item to inventory
             Debug.Log("you won!");
@@ -94,16 +68,130 @@ public class minigamecontroller : MonoBehaviour
         SceneManager.LoadScene("Map");
     }
 
-
-    private void SlidingPuzzleClick(Button thisBtn)
+    public void win()
     {
-        if(Vector2.Distance(thisBtn.transform.position, emptySpace.transform.position) < dist)
+        //win
+        youWon.gameObject.SetActive(true);
+        foreach (Transform child in youWon.transform)
         {
-            Vector2 lastEmptySpacePosition = emptySpace.transform.position;
-            tileScript thisTile = thisBtn.transform.GetComponent<tileScript>();
-            emptySpace.transform.position = thisTile.targetPos;
-            thisTile.targetPos = lastEmptySpacePosition;
+            if (child.name == "winText")
+            {
+                child.GetComponent<Text>().text = "You won! Here's an item for you";
+            }
+        }
+        //show picture of item and 
+        //add shit to inventory
+    }
+
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+            if (hit)
+            {
+                if(Vector2.Distance(emptySpace.position, hit.transform.position) < dist)
+                {
+                    Vector2 lastEmptySpacePosition = emptySpace.position;
+                    tileScript thisTile = hit.transform.GetComponent<tileScript>();
+                    emptySpace.position = thisTile.targetPos;
+                    emptySpace.position = thisTile.targetPos;
+                    thisTile.targetPos = lastEmptySpacePosition;
+
+                    int tileIndex = findIndex(thisTile);
+                    tiles[emptySpaceIndex] = tiles[tileIndex];
+                    tiles[tileIndex] = null;
+                    emptySpaceIndex = tileIndex;
+                }
+            }
+        }
+
+        int correctTiles = 0;
+        foreach(var a in tiles)
+        {
+            if (a != null)
+            {
+                if (a.inrightplace)
+                    correctTiles++;
+            }
+            
+        }
+        if(correctTiles == tiles.Length - 1)
+        {
+            win();
         }
     }
 
+    public void Shuffle()
+    {
+        if(emptySpaceIndex != puzzlenum)
+        {
+            var tileon11LastPos = tiles[puzzlenum].targetPos;
+            tiles[11].targetPos = emptySpace.position;
+            emptySpace.position = tileon11LastPos;
+            tiles[emptySpaceIndex] = tiles[puzzlenum];
+            tiles[puzzlenum] = null;
+            emptySpaceIndex = puzzlenum;
+        }
+
+        int invertion;
+        do
+        {
+            for (int i = 0; i < puzzlenum; i++)
+            {
+                if (tiles[i] != null)
+                {
+                    var lastPos = tiles[i].targetPos;
+                    int randomIndex = Random.Range(0, puzzlenum);
+                    tiles[i].targetPos = tiles[randomIndex].targetPos;
+                    tiles[randomIndex].targetPos = lastPos;
+
+                    var tile = tiles[i];
+                    tiles[i] = tiles[randomIndex];
+                    tiles[randomIndex] = tile;
+
+                }
+            }
+            Debug.Log("shuffled");
+            invertion = GetInversions();
+        }while(invertion%2 != 1);
+    }
+
+    public int findIndex(tileScript ts)
+    {
+        for(int i = 0; i <tiles.Length; i++)
+        {
+            if (tiles[i] != null)
+            {
+                if (tiles[i] == ts)
+                {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    int GetInversions()
+    {
+        int inversionsSum = 0;
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            int thisTileInvertion = 0;
+            for (int j = i; j < tiles.Length; j++)
+            {
+                if (tiles[j] != null)
+                {
+                    if (tiles[i].number > tiles[j].number)
+                    {
+                        thisTileInvertion++;
+                    }
+                }
+            }
+            inversionsSum += thisTileInvertion;
+        }
+        return inversionsSum;
+    }
 }

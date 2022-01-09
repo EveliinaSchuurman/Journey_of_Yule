@@ -25,6 +25,7 @@ public class mapController : MonoBehaviour
     {
         player = FindObjectOfType<PlayerScript>();
     }
+    
     void OnEnable()
     {
         Debug.Log("OnEnable called");
@@ -34,19 +35,17 @@ public class mapController : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         for (int i = 0; i < player.GetOpenRooms(); i++){
-            ProgressRooms(i, false);
+            ProgressRooms(i);
         }
     }
 
     //needs a list of open rooms to check if rooms can open
-    public void ProgressRooms(int roomnumber, bool save)
+    public void ProgressRooms(int roomnumber)
     {
 
         //open room7? openRooms[8]
         //light up pathways and open rooms
         openRooms[roomnumber++] = 1;
-        if (save == true)
-            player.RoomsOpenTo(roomnumber);
 
         foreach(Transform child in rooms[roomnumber].transform)
         {

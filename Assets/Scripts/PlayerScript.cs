@@ -7,6 +7,7 @@ public class PlayerScript : MonoBehaviour
     private int keys = 1;
     private int currentRoomNumber = 0;
     private int roomsOpeneduntil = 0;
+    private bool justWonInTraining;
 
     private void Awake()
     {
@@ -35,13 +36,14 @@ public class PlayerScript : MonoBehaviour
     {
         return currentRoomNumber;
     }
-    public void RoomsOpenTo(int roomNum)
+    public void OpenRoom()
     {
-        roomsOpeneduntil = roomNum;
+        roomsOpeneduntil++;
     }
 
     public int GetOpenRooms()
     {
         return roomsOpeneduntil;
     }
+
 }
