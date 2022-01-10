@@ -16,7 +16,7 @@ public class mapController : MonoBehaviour
 
     public PlayerScript player;
     public GameObject[] rooms; // room 0 is room 1
-    int[] openRooms = new int[9] {0,1,0,0,0,0,0,0,0}; //room'0' is obsolete
+    //int[] openRooms = new int[9] {0,1,0,0,0,0,0,0,0}; //room'0' is obsolete
 
     public TMP_Text errorText;
     public Image errorBackground;
@@ -25,27 +25,22 @@ public class mapController : MonoBehaviour
     {
         player = FindObjectOfType<PlayerScript>();
     }
-    
-    void OnEnable()
-    {
-        Debug.Log("OnEnable called");
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void Start()
     {
-        for (int i = 0; i < player.GetOpenRooms(); i++){
-            ProgressRooms(i);
+        for (int i = 0; i < player.GetOpenRooms(); i++)
+        {
+            LoadOpenRooms(i);
         }
     }
 
     //needs a list of open rooms to check if rooms can open
-    public void ProgressRooms(int roomnumber)
+    public void LoadOpenRooms(int roomnumber)
     {
 
         //open room7? openRooms[8]
         //light up pathways and open rooms
-        openRooms[roomnumber++] = 1;
+        //openRooms[roomnumber++] = 1;
 
         foreach(Transform child in rooms[roomnumber].transform)
         {
@@ -63,17 +58,16 @@ public class mapController : MonoBehaviour
     public void OpenTrainingRoom(int roomnumber) 
     {
         
-        if (TryToOpenRoom(roomnumber) == true)//is the room open, regardless if it is training or fight
+        if (player.GetOpenRooms()<=roomnumber)//is the room open, regardless if it is training or fight
         {
             if (player.GetKeys() <= 0) //training -> does the player have keys?
             {
                 StartCoroutine(ShowImage("Not enough keys!", 2));
             }
-            //check if player has enough keys and substract
-
-            else
+            
+            else //check if player has enough keys and substract
             {
-                player.AmountOfKeys(false);
+                player.AmountOfKeys(false);//negates one
                 player.SetRoom(roomnumber);
                 SceneManager.LoadScene("training");
                 
@@ -89,13 +83,13 @@ public class mapController : MonoBehaviour
     public void OpenFightRoom(int roomnumber)
     {
 
-        if (TryToOpenRoom(roomnumber) == true)//is the room open, regardless if it is training or fight
+        if (player.GetOpenRooms() <= roomnumber)//is the room open, regardless if it is training or fight
         {
 
             //has to remember the room theyre in (or I have to think this again
-
+            player.SetRoom(roomnumber); //playerScript takes in room param so the rooms know what to load
             SceneManager.LoadScene("fight");
-            //playerScript takes in room param so the rooms know what to load
+            
         }
         else
         {
@@ -104,15 +98,15 @@ public class mapController : MonoBehaviour
         }
     }
 
-    private bool TryToOpenRoom(int roomnum)
-    {
-        //open room7? openRooms[8]
-        if (openRooms[roomnum++] == 1)
-        {
-            return true;
-        }
-        else return false;
-    }
+    //private bool TryToOpenRoom(int roomnum)
+    //{
+    //    //open room7? openRooms[8]
+    //    if (openRooms[roomnum++] == 1)
+    //    {
+    //        return true;
+    //    }
+    //    else return false;
+    //}
 
     IEnumerator ShowMessage(string msg, float delay)
     {

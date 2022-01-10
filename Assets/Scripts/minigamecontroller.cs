@@ -8,7 +8,7 @@ using TMPro;
 public class minigamecontroller : MonoBehaviour
 {
     private PlayerScript player;
-    private int activeGame = 1; // find = 10, slide =1
+    public int activeGame = 2; // find = 10, slide =1
 
     //find_and_click
     public Button find1;
@@ -26,10 +26,14 @@ public class minigamecontroller : MonoBehaviour
     public float dist;
     private int emptySpaceIndex = 8;
     private int puzzlenum = 8;
+    public GameObject slidingPuzzle;
 
+    //jigsaw
+    public GameObject jigsaw;
 
-    public void Start()
-    {
+    public void Awake() { 
+    
+        //FING
         _camera = Camera.main;
         if(activeGame == 0)
         {
@@ -42,11 +46,15 @@ public class minigamecontroller : MonoBehaviour
         }
         if(activeGame == 1)
         {
-           
-
+            slidingPuzzle.SetActive(true);
+            Shuffle();
+        }
+        if(activeGame == 2)
+        {
+            jigsaw.SetActive(true);
         }
 
-        Shuffle();
+        
 
     }
 
@@ -86,41 +94,44 @@ public class minigamecontroller : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if(activeGame == 1)
         {
-            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-            if (hit)
+            if (Input.GetMouseButtonDown(0))
             {
-                if(Vector2.Distance(emptySpace.position, hit.transform.position) < dist)
+                Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+                if (hit)
                 {
-                    Vector2 lastEmptySpacePosition = emptySpace.position;
-                    tileScript thisTile = hit.transform.GetComponent<tileScript>();
-                    emptySpace.position = thisTile.targetPos;
-                    emptySpace.position = thisTile.targetPos;
-                    thisTile.targetPos = lastEmptySpacePosition;
+                    if (Vector2.Distance(emptySpace.position, hit.transform.position) < dist)
+                    {
+                        Vector2 lastEmptySpacePosition = emptySpace.position;
+                        tileScript thisTile = hit.transform.GetComponent<tileScript>();
+                        emptySpace.position = thisTile.targetPos;
+                        emptySpace.position = thisTile.targetPos;
+                        thisTile.targetPos = lastEmptySpacePosition;
 
-                    int tileIndex = findIndex(thisTile);
-                    tiles[emptySpaceIndex] = tiles[tileIndex];
-                    tiles[tileIndex] = null;
-                    emptySpaceIndex = tileIndex;
+                        int tileIndex = findIndex(thisTile);
+                        tiles[emptySpaceIndex] = tiles[tileIndex];
+                        tiles[tileIndex] = null;
+                        emptySpaceIndex = tileIndex;
+                    }
                 }
             }
-        }
 
-        int correctTiles = 0;
-        foreach(var a in tiles)
-        {
-            if (a != null)
+            int correctTiles = 0;
+            foreach (var a in tiles)
             {
-                if (a.inrightplace)
-                    correctTiles++;
+                if (a != null)
+                {
+                    if (a.inrightplace)
+                        correctTiles++;
+                }
+
             }
-            
-        }
-        if(correctTiles == tiles.Length - 1)
-        {
-            win();
+            if (correctTiles == tiles.Length - 1)
+            {
+                win();
+            }
         }
     }
 
