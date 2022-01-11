@@ -1570,7 +1570,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &286536285
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2219,7 +2219,8 @@ MonoBehaviour:
   - {fileID: 2024885694}
   - {fileID: 0}
   dist: 3.5
-  SelectedPiece: {fileID: 0}
+  slidingPuzzle: {fileID: 504372404}
+  jigsaw: {fileID: 286536284}
 --- !u!4 &602847895
 Transform:
   m_ObjectHideFlags: 0
