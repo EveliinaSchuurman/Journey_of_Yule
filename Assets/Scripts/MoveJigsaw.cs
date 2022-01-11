@@ -32,7 +32,12 @@ public class MoveJigsaw : MonoBehaviour
                     GetComponent<SortingGroup>().sortingOrder = -1;
                 }
             }
-            
+            if (inRightPos == true)
+            {
+                GetComponent<SortingGroup>().sortingOrder = -1;
+            }
+
+
         }
     }
 }
