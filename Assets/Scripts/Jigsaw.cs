@@ -12,7 +12,7 @@ public class Jigsaw : MonoBehaviour
     public Sprite[] sprites;
     void Start()
     {
-        int rand = Random.Range(0, (sprites.Length -1));
+        int rand = Random.Range(0, (sprites.Length));
         _mini = FindObjectOfType<minigamecontroller>();
         if (_mini == null)
             Debug.Log("not found!");
@@ -20,6 +20,7 @@ public class Jigsaw : MonoBehaviour
         {
             GameObject.Find("puzzle(" + i + ")").transform.GetComponent<SpriteRenderer>().sprite = sprites[rand];
         }
+        this.gameObject.GetComponent<SpriteRenderer>().sprite = sprites[rand];
     }
 
     void Update()
