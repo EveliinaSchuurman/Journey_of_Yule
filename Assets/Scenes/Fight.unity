@@ -696,8 +696,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 55
-  m_fontSizeBase: 55
+  m_fontSize: 45
+  m_fontSizeBase: 45
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -910,7 +910,7 @@ GameObject:
   - component: {fileID: 401428108}
   m_Layer: 0
   m_Name: BattleSystem
-  m_TagString: Untagged
+  m_TagString: Battle System
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -943,11 +943,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5089c4c91c39bd742aa8a5bcb5d21615, type: 2}
   - {fileID: 11400000, guid: 9fb6e6ebcca56e844934e61ee2bde8f4, type: 2}
   - {fileID: 11400000, guid: 271bd48b6010e0c4984d3ebf9cc8ab2c, type: 2}
+  playerAvatar: {fileID: 741507485}
   playerHPFilled: {fileID: 1826436197}
   HPText: {fileID: 1357409691}
   bottomText: {fileID: 292260675}
   itemGrid: {fileID: 1678858817}
   itemButtonPrefab: {fileID: 411151361952517721, guid: bfa615416ead9d044a0a82b99580273c, type: 3}
+  playerSprite: {fileID: 21300000, guid: a50b178a85e1dd349b0110c35b929198, type: 3}
   itemsList:
   - {fileID: 11400000, guid: ebec282f7b4b1a3439ee9dbff2642ce4, type: 2}
   - {fileID: 11400000, guid: 0824da52087ea5c4ca0d94908a5c7263, type: 2}
@@ -955,6 +957,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1db909fab918dcb4cbb7b82cac78750a, type: 2}
   - {fileID: 11400000, guid: d1831972293ce7e40a0bae0efcb73af8, type: 2}
   - {fileID: 11400000, guid: 646ae5936ba4ad04da957bbd8206a208, type: 2}
+  playerMaxHP: 100
+  playerCurrentHP: 100
 --- !u!4 &401428109
 Transform:
   m_ObjectHideFlags: 0
