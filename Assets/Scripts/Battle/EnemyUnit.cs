@@ -16,11 +16,6 @@ public class EnemyUnit : MonoBehaviour
     private float currentHealth;
     private float damage;
 
-    private void Start()
-    {
-        gameObject.SetActive(false);
-    }
-
     public void SetUpEnemy(Enemy enemy)
     {
         hitButton.onClick.AddListener(TakeDamage);

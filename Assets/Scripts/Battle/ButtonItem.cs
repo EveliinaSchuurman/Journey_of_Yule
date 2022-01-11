@@ -10,10 +10,27 @@ public class ButtonItem : MonoBehaviour
     public TextMeshProUGUI itemAmount;
     public TextMeshProUGUI itemName;
 
-    public void InitButton(Sprite sprite, int amount, string name)
+    public Item itemAttached;
+
+    public void InitButton(Item item, int amount)
     {
-        itemImage.sprite = sprite;
-        itemAmount.text = amount.ToString();
-        itemName.text = name;
+        itemAttached = item;
+        itemImage.sprite = item.itemPicture;
+
+        if (item.itemBattleType == ItemBattleType.MISTLETOE)
+        {
+            itemAmount.text = "";
+        }
+        else if (amount == 0)
+        {
+            gameObject.GetComponent<Button>().interactable = false;
+            itemAmount.text = amount.ToString();
+        }
+        else
+        {
+            itemAmount.text = amount.ToString();
+        }
+
+        itemName.text = item.itemName;
     }
 }
