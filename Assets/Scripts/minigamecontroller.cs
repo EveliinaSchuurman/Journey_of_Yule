@@ -8,7 +8,7 @@ using TMPro;
 public class minigamecontroller : MonoBehaviour
 {
     private PlayerScript player;
-    public int activeGame = 2; // find = 10, slide =1
+    public int activeGame = 3; // find = 10, slide =1
 
     //find_and_click
     public Button find1;
@@ -31,9 +31,13 @@ public class minigamecontroller : MonoBehaviour
     //jigsaw
     public GameObject jigsaw;
 
+    //tinsel
+    public int connections = 0;
+    public GameObject tinsel;
+
     public void Awake() { 
     
-        //FING
+        //FIND PLAYER
         _camera = Camera.main;
         if(activeGame == 0)
         {
@@ -53,8 +57,11 @@ public class minigamecontroller : MonoBehaviour
         {
             jigsaw.SetActive(true);
         }
+        if (activeGame == 3)
+        {
+            //tinsel.SetActive(true);
+        }
 
-        
 
     }
 
@@ -133,6 +140,22 @@ public class minigamecontroller : MonoBehaviour
                 win();
             }
         }
+        if (activeGame == 3)
+        {
+            if(GetConnections() == 5)
+            {
+                win();
+            }
+        }
+    }
+
+    public void SetConnections()
+    {
+        connections++;
+    }
+    public int GetConnections()
+    {
+        return connections;
     }
 
     public void Shuffle()
