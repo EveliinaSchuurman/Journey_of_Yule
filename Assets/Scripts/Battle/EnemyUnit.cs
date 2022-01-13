@@ -11,11 +11,10 @@ public class EnemyUnit : MonoBehaviour
 
     public Button hitButton;
 
-    private Enemy enemyObject;
+    public Enemy enemyObject;
     private string enemyName;
     private float maxHealth;
     private float currentHealth;
-    private float damage;
 
     private BattleController battleController;
 
@@ -35,7 +34,6 @@ public class EnemyUnit : MonoBehaviour
         enemyName = enemy.enemyName;
         maxHealth = enemy.maxHP;
         currentHealth = enemy.maxHP;
-        damage = enemy.damage;
     }
 
     public void EnableHitBox()

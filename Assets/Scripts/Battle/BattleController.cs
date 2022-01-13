@@ -24,14 +24,20 @@ public class BattleController : MonoBehaviour
     // Player UI
     public Image playerAvatar;
     public Image playerHPFilled;
-    public TextMeshProUGUI HPText;
+    public TextMeshProUGUI playerHPText;
     public TextMeshProUGUI bottomText;
     public GameObject itemGrid;
+    public GameObject playerInfo;
 
     public GameObject itemButtonPrefab;
     public Sprite playerSprite;
 
     public List<Item> itemsList = new List<Item>();
+
+    // Companion UI
+    public GameObject companionInfo;
+
+    public GameObject companionHeartPrefab;
 
     // Player
     private Item selectedItem;
@@ -48,7 +54,7 @@ public class BattleController : MonoBehaviour
 
     void Start()
     {
-        MakeTestInventory();
+        MakeTestPlayer();
 
         InitializeBattle();
     }
@@ -79,7 +85,11 @@ public class BattleController : MonoBehaviour
 
             case BattleState.ENEMY_TURN:
                 // Enemy
-                Debug.Log("Enemy turn");
+                foreach (EnemyUnit e in enemyUnitsInBattle)
+                {
+                    EnemyTurn(e);
+                }
+                TurnSelector(BattleState.PLAYER_TURN);
                 break;
 
             default:
@@ -186,10 +196,15 @@ public class BattleController : MonoBehaviour
     {
         Debug.Log("Companion turn: " + companion._coObject.coName);
 
+        if(enemyUnitsInBattle.Count == 0)
+        {
+            return;
+        }
+
         switch (companion._coObject.coType)
         {
             case CompanionType.SNOWMAN:
-                // Blizzard
+                //Blizzard
                 ShowBottomText(companion._coObject.coName + " used Blizzard!");
 
                 for (int i = enemyUnitsInBattle.Count - 1; i >= 0; i--)
@@ -200,6 +215,8 @@ public class BattleController : MonoBehaviour
                         enemyUnitsInBattle.RemoveAt(i);
                     }
                 }
+                if (CheckIfEnd())
+                    EndBattle();
                 break;
 
             case CompanionType.ELF:
@@ -211,11 +228,62 @@ public class BattleController : MonoBehaviour
             case CompanionType.GINGERBREAD_MAN:
                 // Rock Dough
                 ShowBottomText(companion._coObject.coName + " used Rock Dough!");
-
+                EnemyUnit targetUnit = enemyUnitsInBattle[Random.Range(0, enemyUnitsInBattle.Count)];
+                if (!targetUnit.TakeDamage(companion._coObject.coPower))
+                {
+                    targetUnit.gameObject.SetActive(false);
+                    enemyUnitsInBattle.Remove(targetUnit);
+                }
+                if (CheckIfEnd())
+                    EndBattle();
                 break;
         }
 
         HideBottomText();
+    }
+
+    private void EnemyTurn(EnemyUnit enemy)
+    {
+        // Chooses target at random
+        if (companionsList.Count > 0)
+        {
+            /*--------------------------------
+             
+             
+             
+             MUISTA: Enemy resistance + weakness
+             
+             
+             
+             --------------------------------*/
+        }
+        else
+        {
+            // Check is player survives damage taken
+            if (!PlayerTakeDamage(enemy.enemyObject.damage))
+            {
+                CheckIfEnd();
+                EndBattle();
+            }
+        }
+    }
+
+    private bool PlayerTakeDamage(float damageTaken)
+    {
+        playerCurrentHP -= damageTaken;
+
+        if (playerCurrentHP <= 0)
+        {
+            playerHPText.text = Mathf.Round(playerCurrentHP).ToString() + " HP";
+            playerHPFilled.fillAmount = (playerCurrentHP / playerMaxHP);
+            return false;
+        }
+        else
+        {
+            playerHPText.text = Mathf.Round(playerCurrentHP).ToString() + " HP";
+            playerHPFilled.fillAmount = (playerCurrentHP / playerMaxHP);
+            return true;
+        }
     }
 
     private bool CheckIfEnd()
@@ -223,13 +291,11 @@ public class BattleController : MonoBehaviour
         // Enemy won
         if (playerCurrentHP <= 0)
         {
-            Debug.Log("You ded lol");
             battleState = BattleState.LOST;
             return true;
         } 
         // Player won
         else if (enemyUnitsInBattle.Count <= 0) {
-            Debug.Log("You won! WOW");
             battleState = BattleState.WON;
             return true;
         } 
@@ -243,6 +309,8 @@ public class BattleController : MonoBehaviour
     private void EndBattle()
     {
         Debug.Log("Battle end, result: " + battleState.ToString());
+        HideItems();
+        ShowBottomText("Battle result: " + battleState.ToString());
     }
 
     private void HideItems()
@@ -272,8 +340,11 @@ public class BattleController : MonoBehaviour
     }
 
     // TEST METHODS
-    private void MakeTestInventory()
+    private void MakeTestPlayer()
     {
+        playerMaxHP = 100;
+        playerCurrentHP = playerMaxHP;
+
         inv.inventoryList.Add(itemsList[1]);
         inv.inventoryList.Add(itemsList[1]);
         inv.inventoryList.Add(itemsList[2]);
