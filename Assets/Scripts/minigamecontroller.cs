@@ -59,7 +59,7 @@ public class minigamecontroller : MonoBehaviour
         }
         if (activeGame == 3)
         {
-            //tinsel.SetActive(true);
+            tinsel.SetActive(true);
         }
 
 
