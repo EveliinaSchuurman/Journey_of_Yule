@@ -51,16 +51,49 @@ public class EnemyUnit : MonoBehaviour
         battleController.UseItem(this);
     }
 
-    public bool TakeDamage(float damageDealt)
+    // Deal damage based on an item
+    public bool TakeDamage(Item item)
+    {
+        float damageDealt;
+
+        // Check weakness and resistance
+        if(enemyObject.weakness == item.itemBattleType)
+        {
+            damageDealt = item.itemDamage * 2;
+        } 
+        else if (enemyObject.resistance == item.itemBattleType)
+        {
+            damageDealt = item.itemDamage / 2;
+        }
+        else
+        {
+            damageDealt = item.itemDamage;
+        }
+
+        currentHealth -= damageDealt;
+
+        if (currentHealth <= 0)
+        {
+            HPFilled.fillAmount = (currentHealth / maxHealth);
+            return false;
+        } 
+        else
+        {
+            HPFilled.fillAmount = (currentHealth / maxHealth);
+            return true;
+        }
+    }
+
+    // Deal damage based on a float number
+    public bool TakeDirectDamage(float damageDealt)
     {
         currentHealth -= damageDealt;
 
         if (currentHealth <= 0)
         {
             HPFilled.fillAmount = (currentHealth / maxHealth);
-            Debug.Log(enemyName + " died lol");
             return false;
-        } 
+        }
         else
         {
             HPFilled.fillAmount = (currentHealth / maxHealth);

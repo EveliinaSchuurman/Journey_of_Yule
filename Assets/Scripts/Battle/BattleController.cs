@@ -36,7 +36,6 @@ public class BattleController : MonoBehaviour
 
     // Companion UI
     public GameObject companionInfo;
-
     public GameObject companionHeartPrefab;
 
     // Player
@@ -51,6 +50,10 @@ public class BattleController : MonoBehaviour
 
     // TEST PLAYER
     private Inventory inv = new Inventory();
+
+    // Timers
+    private WaitForSeconds shortWait = new WaitForSeconds(0.75f);
+    private WaitForSeconds mediumWait = new WaitForSeconds(1.2f);
 
     void Start()
     {
@@ -74,22 +77,12 @@ public class BattleController : MonoBehaviour
 
             case BattleState.COMPANION_TURN:
                 // Companion
-                foreach (BattleCompanion co in inv.companionList)
-                {
-                    playerAvatar.sprite = co._coObject.coPicture;
-                    CompanionTurn(co);
-                }
-                playerAvatar.sprite = playerSprite;
-                TurnSelector(BattleState.ENEMY_TURN);
+                StartCoroutine(CompanionTurn());
                 break;
 
             case BattleState.ENEMY_TURN:
                 // Enemy
-                foreach (EnemyUnit e in enemyUnitsInBattle)
-                {
-                    EnemyTurn(e);
-                }
-                TurnSelector(BattleState.PLAYER_TURN);
+                StartCoroutine(EnemyTurn());
                 break;
 
             default:
@@ -176,7 +169,7 @@ public class BattleController : MonoBehaviour
         HideBottomText();
 
         // Check if alive
-        if (!target.TakeDamage(selectedItem.itemDamage))
+        if (!target.TakeDamage(selectedItem))
         {
             enemyUnitsInBattle.Remove(target);
             target.gameObject.SetActive(false);
@@ -192,92 +185,144 @@ public class BattleController : MonoBehaviour
         }
     }
 
-    private void CompanionTurn(BattleCompanion companion)
+    IEnumerator CompanionTurn()
     {
-        Debug.Log("Companion turn: " + companion._coObject.coName);
-
-        if(enemyUnitsInBattle.Count == 0)
+        foreach (BattleCompanion companion in inv.inventoryCompanionList)
         {
-            return;
-        }
+            if (enemyUnitsInBattle.Count == 0)
+            {
+                break;
+            }
 
-        switch (companion._coObject.coType)
-        {
-            case CompanionType.SNOWMAN:
-                //Blizzard
-                ShowBottomText(companion._coObject.coName + " used Blizzard!");
+            playerAvatar.sprite = companion._coObject.coPicture;
 
-                for (int i = enemyUnitsInBattle.Count - 1; i >= 0; i--)
-                {
-                    if (!enemyUnitsInBattle[i].TakeDamage(companion._coObject.coPower))
+            switch (companion._coObject.coType)
+            {
+                case CompanionType.SNOWMAN:
+                    //Blizzard
+                    ShowBottomText(companion._coObject.coName + " used Blizzard!");
+
+                    yield return mediumWait;
+
+                    for (int i = enemyUnitsInBattle.Count - 1; i >= 0; i--)
                     {
-                        enemyUnitsInBattle[i].gameObject.SetActive(false);
-                        enemyUnitsInBattle.RemoveAt(i);
+                        if (!enemyUnitsInBattle[i].TakeDirectDamage(companion._coObject.coPower))
+                        {
+                            enemyUnitsInBattle[i].gameObject.SetActive(false);
+                            enemyUnitsInBattle.RemoveAt(i);
+                        }
                     }
-                }
-                if (CheckIfEnd())
-                    EndBattle();
-                break;
+                    break;
 
-            case CompanionType.ELF:
-                // Healing Starlight
-                ShowBottomText(companion._coObject.coName + " used Healing Starlight!");
-                playerCurrentHP = (playerCurrentHP + companion._coObject.coPower) > playerMaxHP ? playerMaxHP : (playerCurrentHP + companion._coObject.coPower);
-                break;
+                case CompanionType.ELF:
+                    // Healing Starlight
+                    ShowBottomText(companion._coObject.coName + " used Healing Starlight!");
 
-            case CompanionType.GINGERBREAD_MAN:
-                // Rock Dough
-                ShowBottomText(companion._coObject.coName + " used Rock Dough!");
-                EnemyUnit targetUnit = enemyUnitsInBattle[Random.Range(0, enemyUnitsInBattle.Count)];
-                if (!targetUnit.TakeDamage(companion._coObject.coPower))
-                {
-                    targetUnit.gameObject.SetActive(false);
-                    enemyUnitsInBattle.Remove(targetUnit);
-                }
-                if (CheckIfEnd())
-                    EndBattle();
-                break;
+                    yield return shortWait;
+
+                    PlayerUpdateHP(companion._coObject.coPower);
+
+                    yield return shortWait;
+
+                    break;
+
+                case CompanionType.GINGERBREAD_MAN:
+                    // Rock Dough
+                    ShowBottomText(companion._coObject.coName + " used Rock Dough!");
+
+                    yield return mediumWait;
+
+                    EnemyUnit targetUnit = enemyUnitsInBattle[Random.Range(0, enemyUnitsInBattle.Count)];
+                    if (!targetUnit.TakeDirectDamage(companion._coObject.coPower))
+                    {
+                        targetUnit.gameObject.SetActive(false);
+                        enemyUnitsInBattle.Remove(targetUnit);
+                    }
+                    break;
+            }
+
+            HideBottomText();
         }
 
-        HideBottomText();
+        playerAvatar.sprite = playerSprite;
+
+        if (CheckIfEnd())
+            EndBattle();
+        else
+            TurnSelector(BattleState.ENEMY_TURN);
     }
 
-    private void EnemyTurn(EnemyUnit enemy)
+    IEnumerator EnemyTurn()
     {
-        // Chooses target at random
-        if (companionsList.Count > 0)
+        foreach (EnemyUnit enemy in enemyUnitsInBattle)
         {
-            /*--------------------------------
-             
-             
-             
-             MUISTA: Enemy resistance + weakness
-             
-             
-             
-             --------------------------------*/
-        }
-        else
-        {
-            // Check is player survives damage taken
-            if (!PlayerTakeDamage(enemy.enemyObject.damage))
+            // Chooses target at random
+            int target = Random.Range(-1, inv.inventoryCompanionList.Count);
+
+            // Attack player if -1, otherwise choose from inv.inventoryCompanionList
+            if (target == -1)
             {
-                CheckIfEnd();
-                EndBattle();
+                DisplayPlayerInfo();
+
+                // Check if player survives damage taken
+                if (!PlayerUpdateHP(-enemy.enemyObject.damage))
+                {
+                    yield return shortWait;
+                    break;
+                }
+
+                yield return shortWait;
+            }
+            else
+            {
+                DisplayCompanionInfo(inv.inventoryCompanionList[target]);
+
+                yield return shortWait;
+
+                inv.inventoryCompanionList[target]._coCurrentHearts -= 1;
+                DisplayCompanionInfo(inv.inventoryCompanionList[target]);
+
+                if (inv.inventoryCompanionList[target]._coCurrentHearts == 0)
+                {
+                    ShowBottomText(inv.inventoryCompanionList[target]._coObject.coName + " died");
+
+                    inv.inventoryCompanionList.RemoveAt(target);
+                }
+
+                yield return mediumWait;
+
+                HideBottomText();
+                DisplayPlayerInfo();
             }
         }
+
+        if (CheckIfEnd())
+            EndBattle();
+        else
+            TurnSelector(BattleState.PLAYER_TURN);
     }
 
-    private bool PlayerTakeDamage(float damageTaken)
+    private bool PlayerUpdateHP(float updateAmount)
     {
-        playerCurrentHP -= damageTaken;
+        playerCurrentHP += updateAmount;
 
+        // Current HP < 0, player dead
         if (playerCurrentHP <= 0)
         {
-            playerHPText.text = Mathf.Round(playerCurrentHP).ToString() + " HP";
-            playerHPFilled.fillAmount = (playerCurrentHP / playerMaxHP);
+            playerCurrentHP = 0.0f;
+            playerHPText.text = "0 HP";
+            playerHPFilled.fillAmount = 0.0f;
             return false;
         }
+        // Current HP > max HP, reset to max HP
+        else if (playerCurrentHP > playerMaxHP)
+        {
+            playerCurrentHP = playerMaxHP;
+            playerHPText.text = Mathf.Round(playerCurrentHP).ToString() + " HP";
+            playerHPFilled.fillAmount = 1.0f;
+            return true;
+        }
+        // Current HP between 0 and max
         else
         {
             playerHPText.text = Mathf.Round(playerCurrentHP).ToString() + " HP";
@@ -321,6 +366,39 @@ public class BattleController : MonoBehaviour
         }
     }
 
+    private void DisplayCompanionInfo(BattleCompanion companion)
+    {
+        playerInfo.SetActive(false);
+        playerAvatar.sprite = companion._coObject.coPicture;
+        HideCompanionHearts();
+
+        for (int i = 1; i <= companion._coObject.coMaxHearts; i++)
+        {
+            GameObject newHeart = Instantiate(companionHeartPrefab, companionHeartPrefab.transform.position, companionHeartPrefab.transform.rotation);
+            newHeart.transform.SetParent(companionInfo.transform, false);
+
+            if (i > companion._coCurrentHearts)
+            {
+                newHeart.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void HideCompanionHearts()
+    {
+        foreach (Transform child in companionInfo.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+    }
+
+    private void DisplayPlayerInfo()
+    {
+        playerAvatar.sprite = playerSprite;
+        HideCompanionHearts();
+        playerInfo.SetActive(true);
+    }
+
     private void ShowBottomText(string textShown)
     {
         bottomText.text = textShown;
@@ -343,7 +421,10 @@ public class BattleController : MonoBehaviour
     private void MakeTestPlayer()
     {
         playerMaxHP = 100;
-        playerCurrentHP = playerMaxHP;
+        playerCurrentHP = 10;
+
+        playerHPFilled.fillAmount = (playerCurrentHP / playerMaxHP);
+        playerHPText.text = Mathf.Round(playerCurrentHP).ToString() + " HP";
 
         inv.inventoryList.Add(itemsList[1]);
         inv.inventoryList.Add(itemsList[1]);

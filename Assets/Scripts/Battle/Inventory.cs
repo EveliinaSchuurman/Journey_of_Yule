@@ -8,7 +8,7 @@ public class Inventory
     private int coins;
 
     public List<Item> inventoryList = new List<Item>();
-    public List<BattleCompanion> companionList = new List<BattleCompanion>();
+    public List<BattleCompanion> inventoryCompanionList = new List<BattleCompanion>();
 
     public int GetNumberOfItem(ItemBattleType itemType)
     {
@@ -73,7 +73,7 @@ public class Inventory
 
     public bool AddCompanion (Companion companion)
     {
-        foreach (BattleCompanion bc in companionList)
+        foreach (BattleCompanion bc in inventoryCompanionList)
         {
             if (bc._coObject == companion)
             {
@@ -82,13 +82,13 @@ public class Inventory
             }
         }
 
-        companionList.Add(new BattleCompanion(companion));
+        inventoryCompanionList.Add(new BattleCompanion(companion));
         return true;
     }
 
     public bool RemoveCompanion(BattleCompanion bCompanion)
     {
-        return companionList.Remove(bCompanion);
+        return inventoryCompanionList.Remove(bCompanion);
     }
 }
 

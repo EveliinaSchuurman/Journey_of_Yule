@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Bell
   m_EditorClassIdentifier: 
   itemBattleType: 3
-  itemPicture: {fileID: 21300000, guid: 1e806b8d39b970a4c94db92b79f4fb87, type: 3}
+  itemPicture: {fileID: 21300000, guid: 0024289e56e1fd349a709a83ee792cbf, type: 3}
   itemName: Jingle Bells
   itemDamage: 10

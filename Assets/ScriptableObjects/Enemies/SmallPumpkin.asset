@@ -18,5 +18,5 @@ MonoBehaviour:
   maxHP: 10
   damage: 2
   enemyName: Small Pumpkin
-  resistance: 3
-  weakness: 2
+  resistance: 2
+  weakness: 1

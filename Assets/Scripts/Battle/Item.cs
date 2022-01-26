@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ItemBattleType { MISTLETOE, CANDYCANE, LIGHTS, BELL, GINGERBREAD, GIFT }
+public enum ItemBattleType { MISTLETOE, CANDYCANE, LIGHTS, BELL, GINGERBREAD, GIFT, NONE }
 
 [CreateAssetMenu(fileName = "New Item", menuName = "Scriptable Objects/Item")]
 public class Item : ScriptableObject

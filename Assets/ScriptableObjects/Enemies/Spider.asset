@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemySize: 1
   enemyType: 2
-  picture: {fileID: 21300000, guid: 6c9c7727266debb46beedac2ad3770c8, type: 3}
+  picture: {fileID: 21300000, guid: 707e7e3b892304845a3936c08383aa5b, type: 3}
   maxHP: 35
   damage: 15
   enemyName: Spider
-  resistance: 5
-  weakness: 3
+  resistance: 4
+  weakness: 2

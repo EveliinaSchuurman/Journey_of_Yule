@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Gingerbread
   m_EditorClassIdentifier: 
   itemBattleType: 4
-  itemPicture: {fileID: 21300000, guid: 1e806b8d39b970a4c94db92b79f4fb87, type: 3}
+  itemPicture: {fileID: 21300000, guid: 7a1dde36fd504f44f8c06760fbf90557, type: 3}
   itemName: Gingerbread
   itemDamage: 10

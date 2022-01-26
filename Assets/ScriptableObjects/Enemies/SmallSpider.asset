@@ -18,5 +18,5 @@ MonoBehaviour:
   maxHP: 5
   damage: 5
   enemyName: Small Spider
-  resistance: 5
-  weakness: 3
+  resistance: 4
+  weakness: 2

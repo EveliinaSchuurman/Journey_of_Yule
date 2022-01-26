@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a9a61c132f6d8544a03114b78152d41, type: 3}
   m_Name: SmallSkeleton
   m_EditorClassIdentifier: 
-  enemySize: 0
-  enemyType: 0
+  enemySize: 2
+  enemyType: 4
   picture: {fileID: 21300000, guid: e48b16e415ce56143ac793a7aeaf8c3e, type: 3}
   maxHP: 7
   damage: 4
   enemyName: Skull
-  resistance: 4
-  weakness: 5
+  resistance: 3
+  weakness: 4

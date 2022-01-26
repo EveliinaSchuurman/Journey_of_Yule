@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Lights
   m_EditorClassIdentifier: 
   itemBattleType: 2
-  itemPicture: {fileID: 21300000, guid: 1e806b8d39b970a4c94db92b79f4fb87, type: 3}
+  itemPicture: {fileID: 21300000, guid: 264ee5131a2dc904c9ccecc9efbcb2c4, type: 3}
   itemName: Christmas Lights
   itemDamage: 10

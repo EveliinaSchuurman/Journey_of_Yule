@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemySize: 1
   enemyType: 4
-  picture: {fileID: 21300000, guid: dd13cf243fad97a47bdda1ac4753be30, type: 3}
+  picture: {fileID: 21300000, guid: ca85591f9d12b954488b03ba0ecd55c0, type: 3}
   maxHP: 40
   damage: 10
   enemyName: Skeleton
-  resistance: 4
-  weakness: 5
+  resistance: 3
+  weakness: 4
