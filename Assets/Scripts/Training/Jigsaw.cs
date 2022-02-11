@@ -9,18 +9,18 @@ public class Jigsaw : MonoBehaviour
     public int orderIL = 1;
     private minigamecontroller _mini;
     public int rightPieces = 0;
-    public Sprite[] sprites;
     void Start()
     {
-        int rand = Random.Range(0, (sprites.Length));
         _mini = FindObjectOfType<minigamecontroller>();
+        int rand = Random.Range(0, (_mini.sprites.Length));
+        
         if (_mini == null)
-            Debug.Log("not found!");
+            Debug.Log("minigamecontroller not found!");
         for(int i = 0; i < 15; i++)
         {
-            GameObject.Find("puzzle(" + i + ")").transform.GetComponent<SpriteRenderer>().sprite = sprites[rand];
+            GameObject.Find("puzzle(" + i + ")").transform.GetComponent<SpriteRenderer>().sprite = _mini.sprites[rand];
         }
-        this.gameObject.GetComponent<SpriteRenderer>().sprite = sprites[rand];
+        this.gameObject.GetComponent<SpriteRenderer>().sprite = _mini.sprites[rand];
     }
 
     void Update()

@@ -8,16 +8,17 @@ using TMPro;
 public class minigamecontroller : MonoBehaviour
 {
     private PlayerScript player;
-    public int activeGame = 3; // find = 10, slide =1
+    public int activeGame; // find = 10, slide =1
+    public GameObject youWon;
+    public Sprite[] sprites;
 
     //find_and_click
+    public GameObject Find_and_Click;
     public Button find1;
     public Button find2; 
     public Button find3;
     private int objs_found = 0;
     private int objs_needed = 3;
-
-    public GameObject youWon;
 
     //sliding puzzle
     [SerializeField] private Transform emptySpace;
@@ -35,15 +36,21 @@ public class minigamecontroller : MonoBehaviour
     public int connections = 0;
     public GameObject tinsel;
 
-    public void Awake() { 
-    
+    public void Awake() {
+
         //FIND PLAYER
+        if (player != null)
+            activeGame = player.activegame;
+        else activeGame = Random.Range(0, 3);
+        Debug.Log(activeGame);
         _camera = Camera.main;
+
         if(activeGame == 0)
         {
-            find1.gameObject.SetActive(true);
-            find2.gameObject.SetActive(true); 
-            find3.gameObject.SetActive(true);
+            Find_and_Click.gameObject.SetActive(true);
+
+            //TODO: set different backgrounds and button placements
+            Find_and_Click.gameObject.GetComponent<Image>().sprite = sprites[Random.Range(0, sprites.Length)];
             find1.gameObject.GetComponent<Button>().onClick.AddListener(delegate{objClick(find1);});
             find2.gameObject.GetComponent<Button>().onClick.AddListener(delegate { objClick(find2); });
             find3.gameObject.GetComponent<Button>().onClick.AddListener(delegate { objClick(find3); });

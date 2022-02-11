@@ -7,6 +7,10 @@ public class PlayerScript : MonoBehaviour
     private int keys = 1;
     private int currentRoomNumber = 0;
     private int _openRooms = 0;
+    public int activegame
+    {
+        get; private set;
+    }
 
     private void Awake()
     {

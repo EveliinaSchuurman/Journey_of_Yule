@@ -35,15 +35,15 @@ public class ads : MonoBehaviour
 
     private void Awake()
     {
-        //Check if the instance is already assigned(if there is already an object with this same script attached)
+        
         if (instance == null)
         {
-            instance = this; //If instance is empty the assign this object to the instance
-            DontDestroyOnLoad(this.gameObject); //This line will stop Unity from destroying the object when you load new scene.(Point #1)
+            instance = this; 
+            DontDestroyOnLoad(this.gameObject); 
         }
         else
         {
-            Destroy(this.gameObject); //since there is already an object of with script destroy this object so that there will be no conflicts between multiple instances of the same class.
+            Destroy(this.gameObject); 
         }
     }
 
@@ -81,21 +81,6 @@ public class ads : MonoBehaviour
             statusText.text = "Initialization complete";
             RequestAndLoadRewardedAd();
         });
-    }
-
-    private void Update()
-    {
-        //if (showFpsMeter)
-        //{
-        //    fpsMeter.gameObject.SetActive(true);
-        //    deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
-        //    float fps = 1.0f / deltaTime;
-        //    fpsMeter.text = string.Format("{0:0.} fps", fps);
-        //}
-        //else
-        //{
-        //    fpsMeter.gameObject.SetActive(false);
-        //}
     }
 
     #endregion
@@ -223,6 +208,8 @@ public class ads : MonoBehaviour
 
     #region REWARDED ADS
 
+
+    //TODO: replace ad units!
     public void RequestAndLoadRewardedAd()
     {
         statusText.text = "Requesting Rewarded Ad.";
